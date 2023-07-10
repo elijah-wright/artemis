@@ -2,9 +2,16 @@
 
 import { Thread } from './components/thread';
 import Form from './components/form';
-import { client } from '../lib/threads'
+import { getClient } from '../lib/threads';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 export default async function Page() {
+	const token = cookies().get('THREADS_TOKEN');
+	if (token === undefined) {
+		redirect('/login')
+	}
+	const client = getClient(token!.value);
 	const feed = await Promise.resolve(
 		client.feeds.fetch()
 	);
